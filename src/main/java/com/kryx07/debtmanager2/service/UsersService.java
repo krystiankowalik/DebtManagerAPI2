@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UsersService {
 
+    private final UserDao userDao;
+
     @Autowired
-    private UserDao userDao;
+    public UsersService(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     public void save(User user) {
         userDao.save(user);

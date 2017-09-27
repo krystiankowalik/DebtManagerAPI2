@@ -20,7 +20,7 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> users = new HashSet<User>();
+    private Set<User> users = new HashSet<>();
 
     public Group() {
     }

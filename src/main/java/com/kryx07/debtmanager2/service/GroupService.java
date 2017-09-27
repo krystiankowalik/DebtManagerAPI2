@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class GroupService {
 
+    private final GroupDao groupDao;
+
     @Autowired
-    private GroupDao groupDao;
+    public GroupService(GroupDao groupDao) {
+        this.groupDao = groupDao;
+    }
 
     public void save(Group group) {
         groupDao.save(group);

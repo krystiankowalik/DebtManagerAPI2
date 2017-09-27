@@ -1,0 +1,29 @@
+package com.kryx07.debtmanager2.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+import java.time.LocalDate;
+
+import static com.google.common.base.Predicates.not;
+
+@Configuration
+@EnableSwagger2
+public class SwaggerConfig {
+    @Bean
+    public Docket api() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .directModelSubstitute(LocalDate.class, String.class)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(not(PathSelectors.regex("/error")))
+                .paths(not(PathSelectors.regex("/")))
+                //.paths(PathSelectors.any())
+                .build();
+    }
+}
