@@ -4,8 +4,10 @@ import com.kryx07.debtmanager2.dao.UserDao;
 import com.kryx07.debtmanager2.model.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class UsersService {
 
     @Autowired
@@ -16,6 +18,6 @@ public class UsersService {
     }
 
     public User get(int index) {
-        return userDao.get(index);
+        return userDao.getOne(index);
     }
 }
