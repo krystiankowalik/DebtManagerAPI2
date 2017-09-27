@@ -16,9 +16,9 @@ public class Group {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name = "user_groups",
+            name = "users_groups",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
+            inverseJoinColumns= @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
 
@@ -27,6 +27,11 @@ public class Group {
 
     public Group(String name) {
         this.name = name;
+    }
+
+    public Group(String name, Set<User> users) {
+        this.name = name;
+        this.users = users;
     }
 
     public void addUser(User user) {
