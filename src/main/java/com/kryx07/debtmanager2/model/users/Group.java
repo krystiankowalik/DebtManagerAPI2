@@ -23,7 +23,7 @@ public class Group implements Serializable {
     private String name;
 
     @JsonBackReference
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH,  CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "users_groups",
             joinColumns = @JoinColumn(name = "group_id"),

@@ -1,8 +1,6 @@
 package com.kryx07.debtmanager2.service;
 
 import com.kryx07.debtmanager2.dao.group.GroupDao;
-import com.kryx07.debtmanager2.dao.group.GroupDaoCustom;
-import com.kryx07.debtmanager2.dao.user.UserDao;
 import com.kryx07.debtmanager2.model.users.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,14 +14,10 @@ import java.util.stream.Collectors;
 public class GroupService {
 
     private final GroupDao groupDao;
-    private final GroupDaoCustom groupDaoCustom;
-    private final UserDao userDao;
 
     @Autowired
-    public GroupService(GroupDao groupDao, GroupDaoCustom groupDaoCustom, UserDao userDao) {
+    public GroupService(GroupDao groupDao) {
         this.groupDao = groupDao;
-        this.groupDaoCustom = groupDaoCustom;
-        this.userDao = userDao;
     }
 
     public Group save(Group group) {
@@ -31,7 +25,7 @@ public class GroupService {
     }
 
     public Group get(int index) {
-        return groupDao.getOne(index);
+        return groupDao.findOne(index);
 
     }
 
@@ -48,5 +42,10 @@ public class GroupService {
                         .anyMatch(user -> user
                                 .getId() == userId))
                 .collect(Collectors.toList());
+    }
+
+    public boolean delete(int id) {
+        groupDao.delete(id);
+        return get(id) == null;
     }
 }

@@ -1,10 +1,12 @@
 package com.kryx07.debtmanager2.model.users;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kryx07.debtmanager2.model.transaction.Transaction;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -23,8 +25,11 @@ public class User implements Serializable {
     private String password;
 
     //@JsonManagedReference
-    @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Group> groups = new HashSet<>();
+
+    @OneToMany(mappedBy = "payer",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Transaction> transactions;
 
     public User() {
     }

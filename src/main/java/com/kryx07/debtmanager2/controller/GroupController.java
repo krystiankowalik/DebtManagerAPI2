@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,14 +23,14 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @RequestMapping(value = "/byUserId", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Group>> getGroupsByUser(@RequestParam int userId) {
-        return new ResponseEntity<>(groupService.getAllByUserId(userId), HttpStatus.OK);
-    }
-
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Group>> getAllGroups() {
         return new ResponseEntity<>(groupService.getAllGroups(), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/byUserId", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<Group>> getGroupsByUser(@RequestParam int userId) {
+        return new ResponseEntity<>(groupService.getAllByUserId(userId), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
@@ -38,18 +39,31 @@ public class GroupController {
         return newGroup != null ? new ResponseEntity<>(newGroup, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @RequestMapping(value = "/{id}/addUsers", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<List<User>> addUsersToGroup(@PathVariable int id, @RequestBody List<User> users) {
+        Group updatedGroup = groupService.get(id);
+        users.forEach(updatedGroup::addUser);
+        updatedGroup = groupService.save(updatedGroup);
+        return updatedGroup != null ?
+                new ResponseEntity<>(updatedGroup
+                        .getUsers()
+                        .stream()
+                        .filter(users::contains)
+                        .collect(Collectors.toList()), HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
     @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<Group> updateGroup(@RequestBody Group group) {
         Group updatedGroup = groupService.save(group);
         return updatedGroup != null ? new ResponseEntity<>(updatedGroup, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/{id}/addUsers", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<Group> addUsersToGroup(@PathVariable int id, @RequestBody List<User> users) {
-        Group updatedGroup = groupService.get(id);
-        users.forEach(updatedGroup::addUser);
-        updatedGroup = groupService.save(updatedGroup);
-        return updatedGroup != null ? new ResponseEntity<>(updatedGroup, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity deleteGroup(@RequestParam int id) {
+        return groupService.delete(id) ?
+                new ResponseEntity(HttpStatus.OK) :
+                new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
 }
 
