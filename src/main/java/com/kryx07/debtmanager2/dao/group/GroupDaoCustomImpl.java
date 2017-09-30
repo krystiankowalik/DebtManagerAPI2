@@ -20,10 +20,25 @@ public class GroupDaoCustomImpl implements GroupDaoCustom {
 
     @Override
     public List<Group> getAllByUser(int userId) {
-        Query query = sessionFactory.getCurrentSession().createQuery(
-                "from Group.users " +
-                        "where User.id=:user_id");
+        /*Query query = sessionFactory.getCurrentSession().createQuery(
+                "select g.id, g.password, g.username, g.groups from User users join Group.users g where user.id=:user_id");
         query.setParameter("user_id", userId);
+        return query.list();*/
+
+
+        /*String sqlQuery = "SELECT g.group_id, g.name FROM groups g JOIN users_groups WHERE users_groups.user_id =  " + userId + " LIMIT 1 Distinct";
+        SQLQuery query = sessionFactory.getCurrentSession().createSQLQuery(sqlQuery);
+
+        query.addEntity(Group.class);
+
+        return query.list();*/
+
+        Query query = sessionFactory.getCurrentSession().createQuery(
+                "from User u inner  join Group g where u.id=g.users.id and u.id= " + userId
+        );
         return query.list();
+
     }
+
+
 }

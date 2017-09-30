@@ -1,12 +1,20 @@
 package com.kryx07.debtmanager2.model.users;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "groups")
-public class Group {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Group implements Serializable {
+
+    @Transient
+    private long serialVersionUID = 13877953648146L;
 
     @Id
     @GeneratedValue
@@ -14,11 +22,12 @@ public class Group {
     private int id;
     private String name;
 
+    @JsonBackReference
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "users_groups",
             joinColumns = @JoinColumn(name = "group_id"),
-            inverseJoinColumns= @JoinColumn(name = "user_id")
+            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
 

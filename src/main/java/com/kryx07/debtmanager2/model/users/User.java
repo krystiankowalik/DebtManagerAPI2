@@ -1,12 +1,19 @@
 package com.kryx07.debtmanager2.model.users;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class User implements Serializable {
+
+    @Transient
+    private long serialVersionUID = 53877953648246L;
 
     @Id
     @GeneratedValue
@@ -15,7 +22,8 @@ public class User {
     private String username;
     private String password;
 
-    @ManyToMany(mappedBy = "users")
+    //@JsonManagedReference
+    @ManyToMany(mappedBy = "users",cascade = CascadeType.ALL)
     private Set<Group> groups = new HashSet<>();
 
     public User() {
@@ -63,4 +71,6 @@ public class User {
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
+
+
 }
