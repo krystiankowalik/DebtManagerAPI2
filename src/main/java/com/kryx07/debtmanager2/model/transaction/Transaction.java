@@ -27,6 +27,7 @@ public class Transaction implements Serializable {
     private boolean common;
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "user_id")
     private User payer;
 
     //private List<User> users;

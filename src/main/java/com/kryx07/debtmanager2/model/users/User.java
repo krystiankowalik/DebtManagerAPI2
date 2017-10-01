@@ -1,5 +1,6 @@
 package com.kryx07.debtmanager2.model.users;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 
@@ -28,7 +29,8 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Group> groups = new HashSet<>();
 
-    @OneToMany(mappedBy = "payer",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonBackReference
+    @OneToMany(mappedBy = "payer", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Transaction> transactions;
 
     public User() {
@@ -43,6 +45,9 @@ public class User implements Serializable {
         this.groups.add(group);
     }
 
+    public void addTransaction(Transaction transaction) {
+        transactions.add(transaction);
+    }
 
     public int getId() {
         return id;
