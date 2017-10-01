@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -33,5 +34,14 @@ public class TransactionController {
     public ResponseEntity<Transaction> add(@RequestBody Transaction transaction) {
         Transaction newTransaction = transactionService.add(transaction);
         return newTransaction != null ? new ResponseEntity<>(newTransaction, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(name = "/delete", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<Transaction> delete(@RequestParam int id) {
+        if(!transactionService.exists(id)){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        boolean deleted = transactionService.delete(id);
+        return deleted ? new ResponseEntity<>(HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

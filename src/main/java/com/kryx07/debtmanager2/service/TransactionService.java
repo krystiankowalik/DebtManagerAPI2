@@ -36,6 +36,14 @@ public class TransactionService {
         return transactionDao.save(transaction);
     }
 
+    public boolean delete(int id){
+        transactionDao.delete(id);
+        return !transactionDao.exists(id);
+    }
+    public boolean exists(int id){
+        return transactionDao.exists(id);
+    }
+
     public List<Transaction> findAll() {
         return transactionDao.findAll();
     }
