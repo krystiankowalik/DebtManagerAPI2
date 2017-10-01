@@ -1,5 +1,6 @@
 package com.kryx07.debtmanager2.model.transaction;
 
+import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 
 import javax.persistence.*;
@@ -30,14 +31,14 @@ public class Transaction implements Serializable {
     @JoinColumn(name = "user_id")
     private User payer;
 
-    //private List<User> users;
-
-    public Transaction(LocalDate date, BigDecimal amount, String description, boolean common) {
-        this.date = date;
-        this.amount = amount;
-        this.description = description;
-        this.common = common;
-    }
+    //@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    /*@JoinTable(name = "group_transactions",
+            joinColumns = @JoinColumn(name = "transaction_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )*/
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     public Transaction() {
     }
@@ -88,5 +89,13 @@ public class Transaction implements Serializable {
 
     public void setPayer(User payer) {
         this.payer = payer;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 }

@@ -2,10 +2,12 @@ package com.kryx07.debtmanager2.model.users;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kryx07.debtmanager2.model.transaction.Transaction;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,7 +24,7 @@ public class Group implements Serializable {
     private int id;
     private String name;
 
-    @JsonBackReference
+    @JsonBackReference("users")
     @ManyToMany(cascade = {CascadeType.DETACH,  CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "users_groups",
@@ -30,6 +32,12 @@ public class Group implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> users = new HashSet<>();
+
+
+    @JsonBackReference("transactions")
+//    @ManyToMany(mappedBy = "group",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "group",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Transaction> transactions;
 
     public Group() {
     }
@@ -72,5 +80,11 @@ public class Group implements Serializable {
         this.users = users;
     }
 
+    public List<Transaction> getTransactions() {
+        return transactions;
+    }
 
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
 }
