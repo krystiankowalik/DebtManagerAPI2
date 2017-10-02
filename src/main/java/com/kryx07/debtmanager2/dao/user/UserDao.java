@@ -12,7 +12,7 @@ public interface UserDao extends JpaRepository<User, Integer> {
 
     /*void save(User user);
 
-    User get(int index);*/
+    User findOne(int index);*/
 
     /*@Override
     List<User> findAll();*/

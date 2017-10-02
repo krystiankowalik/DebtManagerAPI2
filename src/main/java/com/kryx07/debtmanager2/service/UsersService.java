@@ -1,34 +1,39 @@
 package com.kryx07.debtmanager2.service;
 
 import com.kryx07.debtmanager2.dao.user.UserDao;
+import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
 public class UsersService {
 
     private final UserDao userDao;
+    private final TransactionService transactionService;
 
     @Autowired
-    public UsersService(UserDao userDao) {
+    public UsersService(UserDao userDao, TransactionService transactionService) {
         this.userDao = userDao;
+        this.transactionService = transactionService;
     }
 
     public User save(User user) {
         return userDao.save(user);
     }
 
-    public User get(int index) {
+    public User findOne(int index) {
         return userDao.findOne(index);
     }
 
-    public List<User> getAll() {
+    public List<User> findAll() {
         return userDao.findAll();
     }
 
@@ -41,7 +46,7 @@ public class UsersService {
     }
 
     public boolean userExists(int id) {
-        return get(id) != null;
+        return findOne(id) != null;
     }
 
     public List<User> getByGroupId(Group group) {
@@ -52,5 +57,7 @@ public class UsersService {
         userDao.delete(id);
         return !userExists(id);
     }
+
+
 
 }

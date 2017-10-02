@@ -1,8 +1,10 @@
 package com.kryx07.debtmanager2.controller;
 
+import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
+import com.kryx07.debtmanager2.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,12 @@ import java.util.stream.Collectors;
 public class GroupController {
 
     private final GroupService groupService;
+    private final TransactionService transactionService;
 
     @Autowired
-    public GroupController(GroupService groupService) {
+    public GroupController(GroupService groupService, TransactionService transactionService) {
         this.groupService = groupService;
+        this.transactionService = transactionService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
@@ -53,17 +57,35 @@ public class GroupController {
                 new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<Group> updateGroup(@RequestBody Group group) {
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<Group> updateGroup(@PathVariable int id, @RequestBody Group group) {
+        group.setId(id);
         Group updatedGroup = groupService.save(group);
-        return updatedGroup != null ? new ResponseEntity<>(updatedGroup, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        return updatedGroup != null ?
+                new ResponseEntity<>(updatedGroup, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
     public ResponseEntity deleteGroup(@RequestParam int id) {
         return groupService.delete(id) ?
                 new ResponseEntity(HttpStatus.OK) :
                 new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Group> findOne(@PathVariable int id) {
+        return new ResponseEntity<>(groupService.findOne(id), HttpStatus.OK);
+
+    }
+
+    @RequestMapping(value = "/{id}/transactions", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<Transaction>> getAllTransactionsByGroupId(@PathVariable int id) {
+
+        return new ResponseEntity<>(transactionService.findAllByGroup_Id(id), HttpStatus.OK);
+
+    }
+
 }
 

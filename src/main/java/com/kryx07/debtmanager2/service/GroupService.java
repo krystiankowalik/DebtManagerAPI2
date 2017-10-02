@@ -48,4 +48,8 @@ public class GroupService {
         groupDao.delete(id);
         return get(id) == null;
     }
+
+    public Group findOne(int id) {
+        return groupDao.findOne(id);
+    }
 }

@@ -1,7 +1,9 @@
 package com.kryx07.debtmanager2.controller;
 
+import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
+import com.kryx07.debtmanager2.service.TransactionService;
 import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -16,43 +19,34 @@ import java.util.List;
 public class UsersController {
 
     private final UsersService usersService;
+    private final TransactionService transactionService;
+
 
     @Autowired
-    public UsersController(UsersService usersService, GroupService groupService) {
+    public UsersController(UsersService usersService, GroupService groupService, TransactionService transactionService) {
         this.usersService = usersService;
+        this.transactionService = transactionService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<User>> getAllUsers() {
-        return new ResponseEntity<>(usersService.getAll(), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/addByBody", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-    public ResponseEntity<User> addUserByBody(@RequestBody User newUser) {
-        User addedUser = usersService.save(newUser);
-        return addedUser != null ? new ResponseEntity<>(addedUser, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    }
-
-    @RequestMapping(value = "/addByParams", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<User> addUserByParams(@RequestParam String username, @RequestParam String password) {
-        User newUser = new User(username, password);
-        usersService.save(newUser);
-        return new ResponseEntity<>(newUser, HttpStatus.OK);
+        List<User> users = usersService.findAll();
+        return Optional
+                .of(new ResponseEntity<>(users, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> getById(@PathVariable int id) {
-        return new ResponseEntity<>(usersService.get(id), HttpStatus.OK);
+        return new ResponseEntity<>(usersService.findOne(id), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/getByUsername", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<User> getByUsername(@RequestParam String username) {
-        return new ResponseEntity<>(usersService.getByUserName(username), HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/exists/", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<Boolean> userNameExists(@RequestParam String username) {
-        return new ResponseEntity<>(usersService.userExists(username), HttpStatus.OK);
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+    public ResponseEntity<User> addUserByBody(@RequestBody User newUser) {
+        User addedUser = usersService.save(newUser);
+        return addedUser != null ?
+                new ResponseEntity<>(addedUser, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -71,4 +65,35 @@ public class UsersController {
         User updatedUser = usersService.save(user);
         return updatedUser != null ? new ResponseEntity<>(updatedUser, HttpStatus.OK) : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+    @RequestMapping(value = "/addByParams", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<User> addUserByParams(@RequestParam String username, @RequestParam String password) {
+        User newUser = new User(username, password);
+        usersService.save(newUser);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/{id}/transactions", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<Transaction>> getAllTransactionsByUserId(@PathVariable int id) {
+
+        List<Transaction> transactions = transactionService.findAllByUser_Id(id);
+
+        return !transactions.isEmpty() ?
+                new ResponseEntity<>(transactions, HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+    }
+
+    /*@RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<User> getByUsername(@PathVariable String username) {
+        return new ResponseEntity<>(usersService.getByUserName(username), HttpStatus.OK);
+    }*/
+
+    @RequestMapping(value = "/exists/", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<Boolean> userNameExists(@RequestParam String username) {
+        return new ResponseEntity<>(usersService.userExists(username), HttpStatus.OK);
+    }
+
+
 }

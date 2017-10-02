@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -27,25 +29,51 @@ public class TransactionService {
         this.groupDao = groupDao;
     }
 
-
     public Transaction add(Transaction transaction) {
         User payer = userDao.findOne(transaction.getPayer().getId());
         Group group = groupDao.findOne(transaction.getGroup().getId());
+        transaction.setId(0);
         transaction.setGroup(group);
         transaction.setPayer(payer);
         return transactionDao.save(transaction);
     }
 
-    public boolean delete(int id){
+    public Transaction update(Transaction transaction) {
+        return transactionDao.save(transaction);
+    }
+
+    public boolean delete(int id) {
         transactionDao.delete(id);
         return !transactionDao.exists(id);
     }
-    public boolean exists(int id){
+
+    public boolean exists(int id) {
         return transactionDao.exists(id);
     }
 
     public List<Transaction> findAll() {
         return transactionDao.findAll();
+    }
+
+    public Transaction findOne(int id) {
+        return transactionDao.findOne(id);
+    }
+
+    public List<Transaction> findAllByGroup_Id(int id) {
+        return transactionDao.findAllByGroup_Id(id);
+    }
+
+    public List<Transaction> findAllByUser_Id(int id) {
+        User user = userDao.findOne(id);
+        List<Transaction> usersTransactions = new ArrayList<>();
+        user.getGroups()
+                .forEach(g -> usersTransactions.addAll(findAllByGroup_Id(g.getId())
+                .stream()
+                .filter(t->t.getGroup()
+                        .getUsers()
+                        .contains(user))
+                .collect(Collectors.toList())));
+        return new ArrayList<>(usersTransactions);
     }
 
 
