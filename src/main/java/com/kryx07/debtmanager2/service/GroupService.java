@@ -1,6 +1,6 @@
 package com.kryx07.debtmanager2.service;
 
-import com.kryx07.debtmanager2.dao.group.GroupDao;
+import com.kryx07.debtmanager2.dao.GroupDao;
 import com.kryx07.debtmanager2.model.users.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +47,10 @@ public class GroupService {
     public boolean delete(int id) {
         groupDao.delete(id);
         return get(id) == null;
+    }
+
+    public boolean exists(int id){
+        return groupDao.exists(id);
     }
 
     public Group findOne(int id) {

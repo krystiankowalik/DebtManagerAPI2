@@ -1,9 +1,11 @@
 package com.kryx07.debtmanager2.controller;
 
+import com.kryx07.debtmanager2.model.payable.Payable;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
+import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,11 +22,13 @@ public class GroupController {
 
     private final GroupService groupService;
     private final TransactionService transactionService;
+    private final PayableService payableService;
 
     @Autowired
-    public GroupController(GroupService groupService, TransactionService transactionService) {
+    public GroupController(GroupService groupService, TransactionService transactionService, PayableService payableService) {
         this.groupService = groupService;
         this.transactionService = transactionService;
+        this.payableService = payableService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
@@ -82,10 +86,18 @@ public class GroupController {
 
     @RequestMapping(value = "/{id}/transactions", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Transaction>> getAllTransactionsByGroupId(@PathVariable int id) {
-
-        return new ResponseEntity<>(transactionService.findAllByGroup_Id(id), HttpStatus.OK);
+        return groupService.exists(id) ?
+                new ResponseEntity<>(transactionService.findAllByGroup_Id(id), HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
 
+
+    @RequestMapping(value = "{id}/payables", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<List<Payable>> getAllPayablesByGroup(@PathVariable int id) {
+        return groupService.exists(id) ?
+                new ResponseEntity<>(payableService.findAllByGroupId(id), HttpStatus.OK) :
+                new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
 

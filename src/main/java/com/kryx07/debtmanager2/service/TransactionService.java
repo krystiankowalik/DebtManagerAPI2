@@ -1,8 +1,8 @@
 package com.kryx07.debtmanager2.service;
 
-import com.kryx07.debtmanager2.dao.group.GroupDao;
-import com.kryx07.debtmanager2.dao.group.TransactionDao;
-import com.kryx07.debtmanager2.dao.user.UserDao;
+import com.kryx07.debtmanager2.dao.GroupDao;
+import com.kryx07.debtmanager2.dao.TransactionDao;
+import com.kryx07.debtmanager2.dao.UserDao;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;

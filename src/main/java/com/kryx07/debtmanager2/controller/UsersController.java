@@ -1,8 +1,10 @@
 package com.kryx07.debtmanager2.controller;
 
+import com.kryx07.debtmanager2.model.payable.Payable;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
+import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
 import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,14 @@ import java.util.Optional;
 public class UsersController {
 
     private final UsersService usersService;
+    private final PayableService payableService;
     private final TransactionService transactionService;
 
 
     @Autowired
-    public UsersController(UsersService usersService, GroupService groupService, TransactionService transactionService) {
+    public UsersController(UsersService usersService, GroupService groupService, PayableService payableService, TransactionService transactionService) {
         this.usersService = usersService;
+        this.payableService = payableService;
         this.transactionService = transactionService;
     }
 
@@ -84,6 +88,8 @@ public class UsersController {
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
+
+
 
     /*@RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<User> getByUsername(@PathVariable String username) {

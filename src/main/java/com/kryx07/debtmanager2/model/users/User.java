@@ -6,13 +6,13 @@ import com.kryx07.debtmanager2.model.transaction.Transaction;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class , property = "id")
 public class User implements Serializable {
 
     @Transient
@@ -20,16 +20,16 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "user_id")
+    @Column(name = "id")
     private int id;
     private String username;
     private String password;
 
-    //@JsonManagedReference
+    //@JsonManagedReference("users_groups")
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
-    private Set<Group> groups = new HashSet<>();
+    private Set<Group> groups;
 
-    @JsonBackReference
+    @JsonBackReference//("user_transactions")
     @OneToMany(mappedBy = "payer", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Transaction> transactions;
 

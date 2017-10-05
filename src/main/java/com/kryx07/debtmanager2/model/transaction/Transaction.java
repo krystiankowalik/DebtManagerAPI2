@@ -1,5 +1,6 @@
 package com.kryx07.debtmanager2.model.transaction;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 
@@ -10,15 +11,17 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "transactions")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class , property = "id")
 public class Transaction implements Serializable {
 
     @Transient
     private long serialVersionUID = 83843247273268L;
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "transaction_id")
+    @Column(name = "id")
     private int id;
 
     private LocalDate date;
@@ -27,18 +30,20 @@ public class Transaction implements Serializable {
 
     private boolean common;
 
+    //@JsonManagedReference("user_transactions")
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User payer;
 
-    //@ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    /*@JoinTable(name = "group_transactions",
-            joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )*/
+    //@JsonIgnore
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "group_id")
     private Group group;
+
+    //@JsonIgnore
+    //@JsonManagedReference("transaction_payables")
+    /*@OneToMany(mappedBy = "transaction")
+    private Set<Payable> payables;*/
 
     public Transaction() {
     }
@@ -98,4 +103,12 @@ public class Transaction implements Serializable {
     public void setGroup(Group group) {
         this.group = group;
     }
+
+   /* public Set<Payable> getPayables() {
+        return payables;
+    }
+
+    public void setPayables(Set<Payable> payables) {
+        this.payables = payables;
+    }*/
 }

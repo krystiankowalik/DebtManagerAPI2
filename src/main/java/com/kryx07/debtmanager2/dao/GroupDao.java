@@ -1,4 +1,4 @@
-package com.kryx07.debtmanager2.dao.group;
+package com.kryx07.debtmanager2.dao;
 
 import com.kryx07.debtmanager2.model.users.Group;
 import org.springframework.data.jpa.repository.JpaRepository;

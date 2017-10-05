@@ -6,13 +6,13 @@ import com.kryx07.debtmanager2.model.transaction.Transaction;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Table(name = "groups")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class , property = "id")
 public class Group implements Serializable {
 
     @Transient
@@ -20,23 +20,26 @@ public class Group implements Serializable {
 
     @Id
     @GeneratedValue
-    @Column(name = "group_id")
+    @Column(name = "id")
     private int id;
     private String name;
 
-    @JsonBackReference("users")
-    @ManyToMany(cascade = {CascadeType.DETACH,  CascadeType.PERSIST, CascadeType.REFRESH})
+    @JsonBackReference("users_groups")
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(
             name = "users_groups",
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
+
+  /*  @OneToMany(mappedBy = "group")
+    private Set<Payable> payables;*/
 
 
+    //@JsonIgnore
     @JsonBackReference("transactions")
-//    @ManyToMany(mappedBy = "group",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-    @OneToMany(mappedBy = "group",cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany(mappedBy = "group", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Transaction> transactions;
 
     public Group() {

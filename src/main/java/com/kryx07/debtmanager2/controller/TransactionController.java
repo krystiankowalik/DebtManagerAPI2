@@ -2,7 +2,10 @@ package com.kryx07.debtmanager2.controller;
 
 
 import com.kryx07.debtmanager2.model.transaction.Transaction;
+import com.kryx07.debtmanager2.service.GroupService;
+import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
+import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +19,16 @@ import java.util.List;
 public class TransactionController {
 
     private final TransactionService transactionService;
+    private final PayableService payableService;
+    private final GroupService groupService;
+    private final UsersService usersService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService) {
+    public TransactionController(TransactionService transactionService, PayableService payableService, GroupService groupService, UsersService usersService) {
         this.transactionService = transactionService;
+        this.payableService = payableService;
+        this.groupService = groupService;
+        this.usersService = usersService;
     }
 
     @RequestMapping(name = "/", method = RequestMethod.GET, produces = "application/json")
@@ -37,8 +46,11 @@ public class TransactionController {
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @RequestMapping(name = "/", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(name = "/", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
     public ResponseEntity<Transaction> add(@RequestBody Transaction transaction) {
+        transaction.setGroup(groupService.get(transaction.getGroup().getId()));
+        transaction.setPayer(usersService.findOne(transaction.getPayer().getId()));
+        //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
         Transaction newTransaction = transactionService.add(transaction);
         return newTransaction != null ?
                 new ResponseEntity<>(newTransaction, HttpStatus.OK) :
@@ -64,6 +76,7 @@ public class TransactionController {
         }
 
         transaction.setId(id);
+        //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
         Transaction updatedTransaction = transactionService.update(transaction);
         return updatedTransaction.equals(transaction) ?
                 new ResponseEntity<>(updatedTransaction, HttpStatus.OK) :
