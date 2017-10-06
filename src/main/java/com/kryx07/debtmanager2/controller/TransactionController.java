@@ -10,7 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
 
@@ -50,7 +53,7 @@ public class TransactionController {
     public ResponseEntity<Transaction> add(@RequestBody Transaction transaction) {
         transaction.setGroup(groupService.get(transaction.getGroup().getId()));
         transaction.setPayer(usersService.findOne(transaction.getPayer().getId()));
-        //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
+        transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
         Transaction newTransaction = transactionService.add(transaction);
         return newTransaction != null ?
                 new ResponseEntity<>(newTransaction, HttpStatus.OK) :

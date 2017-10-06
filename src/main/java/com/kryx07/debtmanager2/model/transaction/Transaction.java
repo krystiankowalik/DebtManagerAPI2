@@ -1,15 +1,19 @@
 package com.kryx07.debtmanager2.model.transaction;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.kryx07.debtmanager2.model.payable.Payable;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "transactions")
@@ -41,8 +45,7 @@ public class Transaction {
     private Group group;
 
     //@JsonIgnore
-    //@JsonManagedReference("transaction_payables")
-    /*@OneToMany(mappedBy = "transaction")
-    private Set<Payable> payables;*/
-
+    @Getter(onMethod = @_(@JsonManagedReference("transaction_payables")))
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
+    private Set<Payable> payables;
 }

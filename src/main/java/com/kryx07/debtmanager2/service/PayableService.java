@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -53,6 +54,10 @@ public class PayableService {
 
     }
 
+    public void save(Set<Payable> payables) {
+        payableDao.save(payables);
+    }
+
     public Set<Payable> calculatePayablesFromTransaction(final Transaction transaction) {
 
         Set<Payable> payables = new HashSet<>();
@@ -66,7 +71,9 @@ public class PayableService {
                 .filter(user -> !user.equals(transaction.getPayer()))
                 .forEach(debtor ->
                         payables
-                                .add(new Payable(transaction.getPayer(),
+                                .add(new Payable(
+                                        new Random().nextInt(),
+                                        transaction.getPayer(),
                                         debtor,
                                         fractionalAmount,
                                         false,

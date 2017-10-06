@@ -1,9 +1,13 @@
 package com.kryx07.debtmanager2.model.users;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kryx07.debtmanager2.model.payable.Payable;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.Set;
 @Table(name = "groups")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@EqualsAndHashCode(exclude = {"users", "payables", "transactions"})
+
 public class Group {
 
     @Id
@@ -30,8 +36,10 @@ public class Group {
     )
     private Set<User> users;
 
-  /*  @OneToMany(mappedBy = "group")
-    private Set<Payable> payables;*/
+
+    @Getter(onMethod = @_(@JsonIgnore))
+    @OneToMany(mappedBy = "group")
+    private Set<Payable> payables;
 
 
     //@JsonIgnore
