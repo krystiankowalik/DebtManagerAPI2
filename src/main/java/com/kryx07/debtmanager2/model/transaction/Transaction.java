@@ -3,7 +3,9 @@ package com.kryx07.debtmanager2.model.transaction;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,6 +15,8 @@ import java.time.LocalDate;
 @Table(name = "transactions")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
 
     @Id
@@ -41,6 +45,4 @@ public class Transaction {
     /*@OneToMany(mappedBy = "transaction")
     private Set<Payable> payables;*/
 
-    public Transaction() {
-    }
 }

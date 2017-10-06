@@ -15,14 +15,8 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(exclude = {"groups", "transactions"})
 @NoArgsConstructor
-
 @AllArgsConstructor
 
-/*@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(exclude = {"groups", "transactions","serialVersionUID"})*/
 public class User {
 
     @Id
