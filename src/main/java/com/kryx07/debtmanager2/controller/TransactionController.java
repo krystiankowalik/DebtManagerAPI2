@@ -2,6 +2,8 @@ package com.kryx07.debtmanager2.controller;
 
 
 import com.kryx07.debtmanager2.model.transaction.Transaction;
+import com.kryx07.debtmanager2.model.users.Group;
+import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
 import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
@@ -73,13 +75,17 @@ public class TransactionController {
 
 
     @RequestMapping(name = "/", value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<Transaction> update(@PathVariable int id, Transaction transaction) {
+    public ResponseEntity<Transaction> update(@PathVariable int id, @RequestBody Transaction transaction) {
         if (!transactionService.exists(id)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
         transaction.setId(id);
         //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
+        User payer = usersService.findOne(transaction.getPayer().getId());
+        Group group = groupService.findOne(transaction.getGroup().getId());
+        transaction.setPayer(payer);
+        transaction.setGroup(group);
         Transaction updatedTransaction = transactionService.update(transaction);
         return updatedTransaction.equals(transaction) ?
                 new ResponseEntity<>(updatedTransaction, HttpStatus.OK) :
