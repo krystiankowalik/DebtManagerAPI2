@@ -7,6 +7,7 @@ import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
 import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
+import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,12 +24,14 @@ public class GroupController {
     private final GroupService groupService;
     private final TransactionService transactionService;
     private final PayableService payableService;
+    private final UsersService usersService;
 
     @Autowired
-    public GroupController(GroupService groupService, TransactionService transactionService, PayableService payableService) {
+    public GroupController(GroupService groupService, TransactionService transactionService, PayableService payableService, UsersService usersService) {
         this.groupService = groupService;
         this.transactionService = transactionService;
         this.payableService = payableService;
+        this.usersService = usersService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
@@ -59,6 +62,16 @@ public class GroupController {
                         .filter(users::contains)
                         .collect(Collectors.toList()), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @RequestMapping(value = "/{id}/addUser/{userId}", method = RequestMethod.PUT, produces = "application/json")
+    public ResponseEntity<Group> addUsersToGroup(@PathVariable int id, @PathVariable int userId) {
+        Group updatedGroup = groupService.get(id);
+        User user = usersService.findOne(userId);
+        updatedGroup.addUser(user);
+        groupService.save(updatedGroup);
+
+        return new ResponseEntity<>(updatedGroup,HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")

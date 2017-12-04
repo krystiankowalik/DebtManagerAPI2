@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.due.Due;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import lombok.*;
 
@@ -30,6 +31,7 @@ public class User {
     private String password;
 
     //@JsonManagedReference("users_groups")
+  //  @Getter(onMethod = @_(@JsonManagedReference("users_groups")))
     @ManyToMany(mappedBy = "users", cascade = {CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH})
     private Set<Group> groups;
 
