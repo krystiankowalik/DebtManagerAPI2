@@ -1,7 +1,9 @@
 package com.kryx07.debtmanager2.model.users;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import lombok.*;
 
@@ -24,6 +26,7 @@ public class User {
     @Column(name = "id")
     private int id;
     private String username;
+    @Getter(onMethod = @_(@JsonIgnore))
     private String password;
 
     //@JsonManagedReference("users_groups")
@@ -35,10 +38,19 @@ public class User {
     @OneToMany(mappedBy = "payer", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Transaction> transactions;
 
+    @Getter(onMethod = @_(@JsonBackReference("payables_user")))
+    @OneToMany(mappedBy = "debtor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Due> payables;
+
+    @Getter(onMethod = @_(@JsonBackReference("receivables_user")))
+    @OneToMany(mappedBy = "creditor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Due> receivables;
+
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
+
 
     public void addGroup(Group group) {
         this.groups.add(group);

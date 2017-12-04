@@ -1,6 +1,6 @@
 package com.kryx07.debtmanager2.controller;
 
-import com.kryx07.debtmanager2.model.payable.Payable;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
@@ -94,7 +94,7 @@ public class GroupController {
 
 
     @RequestMapping(value = "{id}/payables", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<List<Payable>> getAllPayablesByGroup(@PathVariable int id) {
+    public ResponseEntity<List<Due>> getAllPayablesByGroup(@PathVariable int id) {
         return groupService.exists(id) ?
                 new ResponseEntity<>(payableService.findAllByGroupId(id), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -1,17 +1,17 @@
 package com.kryx07.debtmanager2.dao;
 
-import com.kryx07.debtmanager2.model.payable.Payable;
+import com.kryx07.debtmanager2.model.due.Due;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface PayableDao extends JpaRepository<Payable, Integer> {
+public interface PayableDao extends JpaRepository<Due, Integer> {
 
-    List<Payable> findAllByGroup_Id(int group_id);
-    /*List<Payable> findAllByDebtor_Id(int debtor_id);
-    List<Payable> findAllByCreditor_Id(int creditor_id);
+    List<Due> findAllByGroup_Id(int group_id);
+    /*List<Due> findAllByDebtor_Id(int debtor_id);
+    List<Due> findAllByCreditor_Id(int creditor_id);
 */
 
 }

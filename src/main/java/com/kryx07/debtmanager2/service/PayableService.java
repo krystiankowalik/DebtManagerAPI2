@@ -1,7 +1,7 @@
 package com.kryx07.debtmanager2.service;
 
 import com.kryx07.debtmanager2.dao.PayableDao;
-import com.kryx07.debtmanager2.model.payable.Payable;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,9 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -25,15 +24,15 @@ public class PayableService {
         this.payableDao = payableDao;
     }
 
-    public List<Payable> findAll() {
+    public List<Due> findAll() {
         return payableDao.findAll();
     }
 
-    public List<Payable> findAllByGroupId(int groupId) {
+    public List<Due> findAllByGroupId(int groupId) {
         return payableDao.findAllByGroup_Id(groupId);
     }
 
-    public Payable findOne(int id) {
+    public Due findOne(int id) {
         return payableDao.findOne(id);
     }
 
@@ -49,18 +48,18 @@ public class PayableService {
         return !exists(id);
     }
 
-    public Payable save(Payable payable) {
-        return payableDao.save(payable);
+    public Due save(Due due) {
+        return payableDao.save(due);
 
     }
 
-    public void save(Set<Payable> payables) {
-        payableDao.save(payables);
+    public void save(Set<Due> dues) {
+        payableDao.save(dues);
     }
 
-    public Set<Payable> calculatePayablesFromTransaction(final Transaction transaction) {
+    public List<Due> calculatePayablesFromTransaction(final Transaction transaction) {
 
-        Set<Payable> payables = new HashSet<>();
+        List<Due> dues = new ArrayList<>();
 
         final BigDecimal fractionalAmount = getFractionalAmountFromTransaction(transaction);
 
@@ -70,17 +69,16 @@ public class PayableService {
                 .stream()
                 .filter(user -> !user.equals(transaction.getPayer()))
                 .forEach(debtor ->
-                        payables
-                                .add(new Payable(
-                                        new Random().nextInt(),
-                                        transaction.getPayer(),
+                        dues
+                                .add(new Due(
                                         debtor,
+                                        transaction.getPayer(),
                                         fractionalAmount,
                                         false,
                                         transaction,
                                         transaction.getGroup())));
 
-        return payables;
+        return dues;
 
     }
 

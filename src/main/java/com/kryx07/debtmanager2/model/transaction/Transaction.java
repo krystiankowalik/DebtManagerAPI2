@@ -2,7 +2,7 @@ package com.kryx07.debtmanager2.model.transaction;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.kryx07.debtmanager2.model.payable.Payable;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "transactions")
@@ -47,5 +47,5 @@ public class Transaction {
     //@JsonIgnore
     @Getter(onMethod = @_(@JsonManagedReference("transaction_payables")))
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
-    private Set<Payable> payables;
+    private List<Due> dues;
 }

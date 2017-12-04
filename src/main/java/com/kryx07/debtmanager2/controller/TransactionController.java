@@ -53,7 +53,7 @@ public class TransactionController {
     public ResponseEntity<Transaction> add(@RequestBody Transaction transaction) {
         transaction.setGroup(groupService.get(transaction.getGroup().getId()));
         transaction.setPayer(usersService.findOne(transaction.getPayer().getId()));
-        transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
+        transaction.setDues(payableService.calculatePayablesFromTransaction(transaction));
         Transaction newTransaction = transactionService.add(transaction);
         return newTransaction != null ?
                 new ResponseEntity<>(newTransaction, HttpStatus.OK) :
@@ -79,7 +79,7 @@ public class TransactionController {
         }
 
         transaction.setId(id);
-        //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
+        //transaction.setDues(payableService.calculatePayablesFromTransaction(transaction));
         Transaction updatedTransaction = transactionService.update(transaction);
         return updatedTransaction.equals(transaction) ?
                 new ResponseEntity<>(updatedTransaction, HttpStatus.OK) :

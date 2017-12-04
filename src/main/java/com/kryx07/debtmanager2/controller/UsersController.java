@@ -1,6 +1,5 @@
 package com.kryx07.debtmanager2.controller;
 
-import com.kryx07.debtmanager2.model.payable.Payable;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;

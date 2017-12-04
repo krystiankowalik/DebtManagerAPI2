@@ -1,4 +1,4 @@
-package com.kryx07.debtmanager2.model.payable;
+package com.kryx07.debtmanager2.model.due;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -6,10 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -20,22 +17,22 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(exclude = {"debtor", "creditor", "group", "transaction"})
-public class Payable {
+public class Due {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private int id;
 
-    @Transient
-    @Getter(onMethod = @_(@JsonIgnore))
+    //@Getter(onMethod = @_(@JsonIgnore))
+    @ManyToOne(cascade = CascadeType.ALL)
     private User debtor;
 
-    @Transient
-    @Getter(onMethod = @_(@JsonIgnore))
+    //@Getter(onMethod = @_(@JsonIgnore))
+    @ManyToOne(cascade = CascadeType.ALL)
     private User creditor;
 
-    private int tmp;
+    //private int tmp;
 
     private BigDecimal amount;
 
@@ -53,8 +50,8 @@ public class Payable {
     @JoinColumn(name = "group_id", referencedColumnName = "id")
     private Group group;
 
-    public Payable(int tmp, User debtor, User creditor, BigDecimal amount, boolean settled, Transaction transaction, Group group) {
-        this.tmp = tmp;
+    public Due(User debtor, User creditor, BigDecimal amount, boolean settled, Transaction transaction, Group group) {
+      //  this.tmp = tmp;
         this.debtor = debtor;
         this.creditor = creditor;
         this.amount = amount;

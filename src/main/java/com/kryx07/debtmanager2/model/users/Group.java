@@ -3,7 +3,7 @@ package com.kryx07.debtmanager2.model.users;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.kryx07.debtmanager2.model.payable.Payable;
+import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "groups")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
-@EqualsAndHashCode(exclude = {"users", "payables", "transactions"})
+@EqualsAndHashCode(exclude = {"users", "dues", "transactions"})
 
 public class Group {
 
@@ -39,7 +39,7 @@ public class Group {
 
     @Getter(onMethod = @_(@JsonIgnore))
     @OneToMany(mappedBy = "group")
-    private Set<Payable> payables;
+    private List<Due> dues;
 
 
     //@JsonIgnore
