@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kryx07.debtmanager2.model.due.Due;
-import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import lombok.*;
 
@@ -39,6 +38,10 @@ public class User {
     @Getter(onMethod = @_(@JsonBackReference))
     @OneToMany(mappedBy = "payer", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Transaction> transactions;
+
+    /*@Getter(onMethod = @_(@JsonBackReference("payables_user")))
+    @OneToMany(mappedBy = "payer", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    private Set<Due> dues;*/
 
     @Getter(onMethod = @_(@JsonBackReference("payables_user")))
     @OneToMany(mappedBy = "debtor", cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})

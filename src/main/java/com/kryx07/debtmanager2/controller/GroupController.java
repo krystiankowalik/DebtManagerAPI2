@@ -5,7 +5,7 @@ import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
-import com.kryx07.debtmanager2.service.PayableService;
+import com.kryx07.debtmanager2.service.DueService;
 import com.kryx07.debtmanager2.service.TransactionService;
 import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +23,20 @@ public class GroupController {
 
     private final GroupService groupService;
     private final TransactionService transactionService;
-    private final PayableService payableService;
+    private final DueService dueService;
     private final UsersService usersService;
 
     @Autowired
-    public GroupController(GroupService groupService, TransactionService transactionService, PayableService payableService, UsersService usersService) {
+    public GroupController(GroupService groupService, TransactionService transactionService, DueService dueService, UsersService usersService) {
         this.groupService = groupService;
         this.transactionService = transactionService;
-        this.payableService = payableService;
+        this.dueService = dueService;
         this.usersService = usersService;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Group>> getAllGroups() {
-        return new ResponseEntity<>(groupService.getAllGroups(), HttpStatus.OK);
+        return new ResponseEntity<>(groupService.getAll(), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/byUserId", method = RequestMethod.GET, produces = "application/json")
@@ -71,7 +71,7 @@ public class GroupController {
         updatedGroup.addUser(user);
         groupService.save(updatedGroup);
 
-        return new ResponseEntity<>(updatedGroup,HttpStatus.OK);
+        return new ResponseEntity<>(updatedGroup, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT, produces = "application/json")
@@ -85,15 +85,19 @@ public class GroupController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity deleteGroup(@RequestParam int id) {
-        return groupService.delete(id) ?
-                new ResponseEntity(HttpStatus.OK) :
-                new ResponseEntity(HttpStatus.BAD_REQUEST);
+    public ResponseEntity deleteGroup(@PathVariable int id) {
+        if (groupService.exists(id)) {
+            groupService.delete(id);
+            return new ResponseEntity(HttpStatus.OK);
+        } else {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Group> findOne(@PathVariable int id) {
-        return new ResponseEntity<>(groupService.findOne(id), HttpStatus.OK);
+        return new ResponseEntity<>(groupService.get(id), HttpStatus.OK);
 
     }
 
@@ -109,7 +113,7 @@ public class GroupController {
     @RequestMapping(value = "{id}/payables", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Due>> getAllPayablesByGroup(@PathVariable int id) {
         return groupService.exists(id) ?
-                new ResponseEntity<>(payableService.findAllByGroupId(id), HttpStatus.OK) :
+                new ResponseEntity<>(dueService.findAllByGroupId(id), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

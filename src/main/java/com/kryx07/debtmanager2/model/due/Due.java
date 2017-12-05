@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "payables")
+@Table(name = "dues")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @NoArgsConstructor
@@ -39,7 +39,7 @@ public class Due {
     private boolean settled;
 
     //@Getter(onMethod = @_(@JsonIgnore))
-    @Getter(onMethod = @_(@JsonBackReference("transaction_payables")))
+    @Getter(onMethod = @_(@JsonBackReference("transaction_dues")))
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "transaction_id", referencedColumnName = "id")
     private Transaction transaction;
@@ -51,7 +51,6 @@ public class Due {
     private Group group;
 
     public Due(User debtor, User creditor, BigDecimal amount, boolean settled, Transaction transaction, Group group) {
-      //  this.tmp = tmp;
         this.debtor = debtor;
         this.creditor = creditor;
         this.amount = amount;

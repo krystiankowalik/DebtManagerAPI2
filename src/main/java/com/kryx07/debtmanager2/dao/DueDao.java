@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface PayableDao extends JpaRepository<Due, Integer> {
+public interface DueDao extends JpaRepository<Due, Integer> {
 
     List<Due> findAllByGroup_Id(int group_id);
     /*List<Due> findAllByDebtor_Id(int debtor_id);

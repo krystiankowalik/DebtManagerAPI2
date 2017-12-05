@@ -4,43 +4,37 @@ package com.kryx07.debtmanager2.controller;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
-import com.kryx07.debtmanager2.model.users.Group;
-import com.kryx07.debtmanager2.model.users.User;
+import com.kryx07.debtmanager2.service.DueService;
 import com.kryx07.debtmanager2.service.GroupService;
-import com.kryx07.debtmanager2.service.PayableService;
 import com.kryx07.debtmanager2.service.TransactionService;
 import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/transactions")
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final PayableService payableService;
+    private final DueService dueService;
     private final GroupService groupService;
     private final UsersService usersService;
 
     @Autowired
-    public TransactionController(TransactionService transactionService, PayableService payableService, GroupService groupService, UsersService usersService) {
+    public TransactionController(TransactionService transactionService, DueService dueService, GroupService groupService, UsersService usersService) {
         this.transactionService = transactionService;
-        this.payableService = payableService;
+        this.dueService = dueService;
         this.groupService = groupService;
         this.usersService = usersService;
     }
 
     @RequestMapping(name = "/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Transaction>> findAll() {
-        List<Transaction> transactions = transactionService.findAll();
+        List<Transaction> transactions = transactionService.getAll();
         return !transactions.isEmpty() ?
                 new ResponseEntity<>(transactions, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -49,7 +43,7 @@ public class TransactionController {
     @RequestMapping(name = "/", value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<Transaction> findOne(@PathVariable int id) {
         return transactionService.exists(id) ?
-                new ResponseEntity<>(transactionService.findOne(id), HttpStatus.OK) :
+                new ResponseEntity<>(transactionService.get(id), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -57,7 +51,7 @@ public class TransactionController {
     public ResponseEntity<Transaction> add(@RequestBody Transaction transaction) {
         transaction.setGroup(groupService.get(transaction.getGroup().getId()));
         transaction.setPayer(usersService.findOne(transaction.getPayer().getId()));
-        transaction.setDues(payableService.calculatePayablesFromTransaction(transaction));
+        transaction.setDues(dueService.calculatePayablesFromTransaction(transaction));
         Transaction newTransaction = transactionService.add(transaction);
         return newTransaction != null ?
                 new ResponseEntity<>(newTransaction, HttpStatus.OK) :
@@ -69,10 +63,8 @@ public class TransactionController {
         if (!transactionService.exists(id)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        boolean deleted = transactionService.delete(id);
-        return deleted ?
-                new ResponseEntity<>(HttpStatus.OK) :
-                new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        transactionService.delete(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
@@ -85,10 +77,10 @@ public class TransactionController {
         transaction.setId(id);
         //transaction.setPayables(payableService.calculatePayablesFromTransaction(transaction));
         User payer = usersService.findOne(transaction.getPayer().getId());
-        Group group = groupService.findOne(transaction.getGroup().getId());
+        Group group = groupService.get(transaction.getGroup().getId());
         transaction.setPayer(payer);
         transaction.setGroup(group);
-        Transaction updatedTransaction = transactionService.update(transaction);
+        Transaction updatedTransaction = transactionService.save(transaction);
         return updatedTransaction.equals(transaction) ?
                 new ResponseEntity<>(updatedTransaction, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.BAD_REQUEST);

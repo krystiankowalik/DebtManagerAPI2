@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -34,6 +31,14 @@ public class Transaction {
 
     private boolean common;
 
+    @Getter(AccessLevel.NONE)
+    @Column(name = "transaction_type")
+    private TransactionType transactionType;
+
+    public TransactionType getTransactionType() {
+        return transactionType != null ? transactionType : TransactionType.EXPENSE;
+    }
+
     //@JsonManagedReference("user_transactions")
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
@@ -45,7 +50,7 @@ public class Transaction {
     private Group group;
 
     //@JsonIgnore
-    @Getter(onMethod = @_(@JsonManagedReference("transaction_payables")))
+    @Getter(onMethod = @_(@JsonManagedReference("transaction_dues")))
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
     private List<Due> dues;
 }

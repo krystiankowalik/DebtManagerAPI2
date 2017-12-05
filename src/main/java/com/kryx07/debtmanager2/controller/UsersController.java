@@ -3,7 +3,7 @@ package com.kryx07.debtmanager2.controller;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.GroupService;
-import com.kryx07.debtmanager2.service.PayableService;
+import com.kryx07.debtmanager2.service.DueService;
 import com.kryx07.debtmanager2.service.TransactionService;
 import com.kryx07.debtmanager2.service.UsersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +20,14 @@ import java.util.Optional;
 public class UsersController {
 
     private final UsersService usersService;
-    private final PayableService payableService;
+    private final DueService dueService;
     private final TransactionService transactionService;
 
 
     @Autowired
-    public UsersController(UsersService usersService, GroupService groupService, PayableService payableService, TransactionService transactionService) {
+    public UsersController(UsersService usersService, GroupService groupService, DueService dueService, TransactionService transactionService) {
         this.usersService = usersService;
-        this.payableService = payableService;
+        this.dueService = dueService;
         this.transactionService = transactionService;
     }
 
@@ -81,7 +81,9 @@ public class UsersController {
     public ResponseEntity<List<Transaction>> getAllTransactionsByUserId(@PathVariable int id) {
 
         List<Transaction> transactions = transactionService.findAllByUser_Id(id);
-
+        if (transactions == null) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return !transactions.isEmpty() ?
                 new ResponseEntity<>(transactions, HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
