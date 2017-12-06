@@ -4,6 +4,7 @@ import com.kryx07.debtmanager2.dao.DueDao;
 import com.kryx07.debtmanager2.model.due.Due;
 import com.kryx07.debtmanager2.model.transaction.Transaction;
 import com.kryx07.debtmanager2.model.transaction.TransactionType;
+import com.kryx07.debtmanager2.model.users.Group;
 import com.kryx07.debtmanager2.model.users.User;
 import com.kryx07.debtmanager2.service.base.DbServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,9 +31,26 @@ public class DueService extends DbServiceImpl<Due> {
         this.dueDao = (DueDao) dueDao;
     }
 
-    public List<Due> findAllByGroupId(int groupId) {
+    public List<Due> getAllByGroupId(int groupId) {
         return dueDao.findAllByGroup_Id(groupId);
     }
+
+    public List<Due> getAllByGroupIds(List<Integer> groupIds) {
+        if (groupIds.isEmpty()) {
+            return null;
+        }
+        List<Due> list = new ArrayList<>();
+        groupIds.forEach(id -> list.addAll(getAllByGroupId(id)));
+        return list;
+    }
+
+    public List<Due> getAllByGroups(Set<Group> groups) {
+        if (groups == null) {
+            return null;
+        }
+        return getAllByGroupIds(groups.stream().map(Group::getId).collect(Collectors.toList()));
+    }
+
 
     public List<Due> calculatePayablesFromTransaction(final Transaction transaction) {
         return transaction

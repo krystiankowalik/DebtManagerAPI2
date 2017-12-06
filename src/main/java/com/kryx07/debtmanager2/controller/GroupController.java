@@ -67,7 +67,7 @@ public class GroupController {
     @RequestMapping(value = "/{id}/addUser/{userId}", method = RequestMethod.PUT, produces = "application/json")
     public ResponseEntity<Group> addUsersToGroup(@PathVariable int id, @PathVariable int userId) {
         Group updatedGroup = groupService.get(id);
-        User user = usersService.findOne(userId);
+        User user = usersService.get(userId);
         updatedGroup.addUser(user);
         groupService.save(updatedGroup);
 
@@ -110,10 +110,10 @@ public class GroupController {
     }
 
 
-    @RequestMapping(value = "{id}/payables", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "{id}/dues", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<List<Due>> getAllPayablesByGroup(@PathVariable int id) {
         return groupService.exists(id) ?
-                new ResponseEntity<>(dueService.findAllByGroupId(id), HttpStatus.OK) :
+                new ResponseEntity<>(dueService.getAllByGroupId(id), HttpStatus.OK) :
                 new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

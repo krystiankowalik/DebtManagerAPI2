@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +39,23 @@ public class TransactionService extends DbServiceImpl<Transaction> {
         transaction.setId(0);
         transaction.setGroup(group);
         transaction.setPayer(payer);
+        LocalDateTime now = LocalDateTime.now();
+        transaction.setAddedTime(now);
+        transaction.setLastModifiedTime(now);
         return this.save(transaction);
+    }
+
+    @Override
+    public Transaction save(Transaction transaction) {
+        transaction.setLastModifiedTime(LocalDateTime.now());
+        return super.save(transaction);
+    }
+
+    @Override
+    public List<Transaction> save(Iterable<Transaction> transactions) {
+        LocalDateTime now = LocalDateTime.now();
+        transactions.forEach(t -> t.setLastModifiedTime(now));
+        return super.save(transactions);
     }
 
     public List<Transaction> findAllByGroup_Id(int id) {

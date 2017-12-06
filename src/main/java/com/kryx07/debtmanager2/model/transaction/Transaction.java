@@ -10,6 +10,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -53,4 +54,10 @@ public class Transaction {
     @Getter(onMethod = @_(@JsonManagedReference("transaction_dues")))
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "transaction")
     private List<Due> dues;
+
+    @Column(name = "added_time")
+    private LocalDateTime addedTime;
+
+    @Column(name = "last_modified_time")
+    private LocalDateTime lastModifiedTime;
 }
